@@ -28,6 +28,7 @@ static void printb(int n)
 	size_t i;
 	size_t intsize;
 	unsigned int m; /* Mask */
+	int leading_zeros = 1; /* Do not print leading zeros */
 
 	if (n < 256) {
 		intsize = 8;
@@ -43,8 +44,9 @@ static void printb(int n)
 
 	for (i = 0; i < intsize; i++) {
 		if (m & n) {
+			leading_zeros = 0;
 			printf("1");
-		} else {
+		} else if (!leading_zeros) {
 			printf("0");
 		}
 
