@@ -26,8 +26,18 @@ int main(int argc, char *argv[])
 static void printb(int n)
 {
 	size_t i;
-	size_t intsize = sizeof(int) * 8;
-	unsigned int m = 1 << (intsize - 1);
+	size_t intsize;
+	unsigned int m; /* Mask */
+
+	if (n < 256) {
+		intsize = 8;
+	} else if (n < 65536) {
+		intsize = 16;
+	} else {
+		intsize = sizeof(int) * 8;
+	}
+
+	m = 1 << (intsize - 1);
 
 	printf("0b");
 
