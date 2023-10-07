@@ -30,6 +30,11 @@ static void printb(int n)
 	unsigned int m; /* Mask */
 	int leading_zeros = 1; /* Do not print leading zeros */
 
+	if (n == 0) {
+		printf("0b0");
+		return;
+	}
+
 	if (n < 256) {
 		intsize = 8;
 	} else if (n < 65536) {
