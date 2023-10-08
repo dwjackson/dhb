@@ -2,8 +2,8 @@ EXE_NAME = dhb
 SRC_FILES = dhb.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 CC = cc
-DEBUG = -g
-CFLAGS = -ansi -Wall -Wextra $(DEBUG)
+#DEBUG = -g
+CFLAGS = -ansi -Wall -Wextra -O2 $(DEBUG)
 
 all: $(EXE_NAME)
 
