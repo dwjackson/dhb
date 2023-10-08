@@ -13,6 +13,7 @@
 
 static void lowercase(char *s);
 static int readhex(char *s, size_t len, int *n);
+static int readbin(char *s, size_t len, int *n);
 static void printb(int n);
 
 int main(int argc, char *argv[])
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 	lowercase(input);
 	input_len = strlen(input);
 
-	if (input_len > 2) {
+	if (input_len > PREFIX_LEN) {
 		if (input[0] == '0' && input[1] == 'x') {
 			base = HEX;
 		} else if (input[0] == '0' && input[1] == 'b') {
@@ -48,8 +49,9 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case BIN:
-			fprintf(stderr, "Hex not implemented yet\n");
-			exit(EXIT_FAILURE);
+			if (readbin(input, input_len, &n) != 0) {
+				exit(EXIT_FAILURE);
+			}
 			break;
 		default:
 			fprintf(stderr, "Invalid number\n");
@@ -82,6 +84,30 @@ static int readhex(char *s, size_t len, int *n)
 	if (r != 1) {
 		return -1;
 	}
+	return 0;
+}
+
+static int readbin(char *s, size_t len, int *n)
+{
+	size_t i;
+	char ch;
+	int out = 0x0;
+	size_t numlen = len - PREFIX_LEN;
+	size_t bitidx = 0;
+
+	for (i = PREFIX_LEN; i < len; i++) {
+		ch = s[i];
+		if (ch == '1') {
+			out = out | (0x1 << (numlen - bitidx - 1));
+		} else if (ch == '0') {
+			/* Nothing to do */
+		} else {
+			return -1;
+		}
+		bitidx++;
+	}
+
+	*n = out;
 	return 0;
 }
 
