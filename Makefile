@@ -12,8 +12,11 @@ $(EXE_NAME): $(OBJ_FILES)
 $(OBJ_FILES): $(SRC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_FILES)
 
+test: $(EXE_NAME)
+	sh test.sh
+
 clean:
 	rm -f $(EXE_NAME)
 	rm -f *.o
 
-.PHONY: all clean
+.PHONY: all test clean
