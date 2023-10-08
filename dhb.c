@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 	int base = DEC;
 
 	if (argc < 2) {
+		fprintf(stderr, "USAGE: dhb [NUMBER]\n");
 		exit(EXIT_FAILURE);
 	}
 
