@@ -2,7 +2,7 @@ EXE_NAME = dhb
 SRC_FILES = dhb.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 CC = cc
-CFLAGS = -ansi -Wall -Wextra -O2
+CFLAGS = -ansi -Wall -Wextra -Wpedantic -O2
 
 all: $(EXE_NAME)
 

@@ -12,7 +12,7 @@
 #define HEX_MAX_LEN (sizeof(int) * HEX_DIGITS_PER_BYTE)
 
 static void lowercase(char *s);
-static int readhex(char *s, size_t len, int *n);
+static int readhex(char *s, size_t len, unsigned int *n);
 static int readbin(char *s, size_t len, int *n);
 static void printb(int n);
 
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 			n = atoi(input);
 			break;
 		case HEX:
-			if (readhex(input, input_len, &n) != 0) {
+			if (readhex(input, input_len, (unsigned int *)&n) != 0) {
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -75,7 +75,7 @@ static void lowercase(char *s)
 	}
 }
 
-static int readhex(char *s, size_t len, int *n)
+static int readhex(char *s, size_t len, unsigned int *n)
 {
 	int r;
 	if (len - PREFIX_LEN > HEX_MAX_LEN) {
