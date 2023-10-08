@@ -1,6 +1,7 @@
 # dhb: Decimal/Hexadecimal/Binary
 
 The `dhb` utility is used to convert numbers between different base systems.
+The name stands for "Decimal, Hexadecimal, Binary."
 
 ## Usage
 
