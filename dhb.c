@@ -1,25 +1,87 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
+#define DEC 1
+#define HEX 2
+#define BIN 3
+
+#define PREFIX_LEN 2
+#define HEX_DIGITS_PER_BYTE 2
+#define HEX_MAX_LEN (sizeof(int) * HEX_DIGITS_PER_BYTE)
+
+static void lowercase(char *s);
+static int readhex(char *s, size_t len, int *n);
 static void printb(int n);
 
 int main(int argc, char *argv[])
 {
 	char *input;
-	int n;
+	size_t input_len;
+	int n = 0;
+	int base = DEC;
 
 	if (argc < 2) {
 		exit(EXIT_FAILURE);
 	}
 
 	input = argv[1];
+	lowercase(input);
+	input_len = strlen(input);
 
-	n = atoi(input);
+	if (input_len > 2) {
+		if (input[0] == '0' && input[1] == 'x') {
+			base = HEX;
+		} else if (input[0] == '0' && input[1] == 'b') {
+			base = BIN;
+		}
+	}
+
+	switch (base) {
+		case DEC:
+			n = atoi(input);
+			break;
+		case HEX:
+			if (readhex(input, input_len, &n) != 0) {
+				exit(EXIT_FAILURE);
+			}
+			break;
+		case BIN:
+			fprintf(stderr, "Hex not implemented yet\n");
+			exit(EXIT_FAILURE);
+			break;
+		default:
+			fprintf(stderr, "Invalid number\n");
+			exit(EXIT_FAILURE);
+			break;
+	}
 
 	printf("\t%d\t0x%X\t", n, n);
 	printb(n);
 	printf("\n");
 
+	return 0;
+}
+
+static void lowercase(char *s)
+{
+	while (*s != '\0') {
+		*s = tolower(*s);
+		s++;
+	}
+}
+
+static int readhex(char *s, size_t len, int *n)
+{
+	int r;
+	if (len - PREFIX_LEN > HEX_MAX_LEN) {
+		return -1;
+	}
+	r = sscanf(s, "0x%x", n);
+	if (r != 1) {
+		return -1;
+	}
 	return 0;
 }
 
