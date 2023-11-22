@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
+#include <stdbool.h>
 
 #define DEC 1
 #define HEX 2
@@ -12,15 +14,19 @@
 #define HEX_MAX_LEN (sizeof(int) * HEX_DIGITS_PER_BYTE)
 
 static void lowercase(char *s);
-static int readhex(char *s, size_t len, unsigned int *n);
-static int readbin(char *s, size_t len, int *n);
-static void printb(int n);
+static int readhex(char *s, size_t len, unsigned long *n);
+static int readbin(char *s, size_t len, long *n);
+static void printb(long n);
+
+static bool is_number(const char *s, int (*is_digit)(int));
+static bool is_dec(const char *s);
+static bool is_hex(const char *s);
 
 int main(int argc, char *argv[])
 {
 	char *input;
 	size_t input_len;
-	int n = 0;
+	long n = 0;
 	int base = DEC;
 
 	if (argc < 2) {
@@ -42,10 +48,19 @@ int main(int argc, char *argv[])
 
 	switch (base) {
 		case DEC:
-			n = atoi(input);
+			if (!is_dec(input)) {
+				fprintf(stderr, "Not a number\n");
+				exit(EXIT_FAILURE);
+			}
+			errno = 0;
+			n = strtol(input, NULL, 10);
+			if (errno != 0) {
+				perror("strtol");
+				exit(EXIT_FAILURE);
+			}
 			break;
 		case HEX:
-			if (readhex(input, input_len, (unsigned int *)&n) != 0) {
+			if (readhex(input, input_len, (unsigned long *)&n) != 0) {
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -60,7 +75,7 @@ int main(int argc, char *argv[])
 			break;
 	}
 
-	printf("\t%d\t0x%X\t", n, n);
+	printf("\t%ld\t0x%lX\t", n, n);
 	printb(n);
 	printf("\n");
 
@@ -75,20 +90,31 @@ static void lowercase(char *s)
 	}
 }
 
-static int readhex(char *s, size_t len, unsigned int *n)
+static int readhex(char *s, size_t len, unsigned long *n)
 {
 	int r;
+	char *hexnum = s + 2;
 	if (len - PREFIX_LEN > HEX_MAX_LEN) {
 		return -1;
 	}
-	r = sscanf(s, "0x%x", n);
-	if (r != 1) {
+
+	if (!is_hex(hexnum)) {
+		fprintf(stderr, "Not a hexadecimal number\n");
 		return -1;
 	}
-	return 0;
+
+	errno = 0;
+	r = sscanf(s, "0x%lx", n);
+	if (r == 1) {
+		return 0;
+	}
+	if (errno != 0) {
+		perror("sscanf");
+	}
+	return -1;
 }
 
-static int readbin(char *s, size_t len, int *n)
+static int readbin(char *s, size_t len, long *n)
 {
 	size_t i;
 	char ch;
@@ -103,6 +129,7 @@ static int readbin(char *s, size_t len, int *n)
 		} else if (ch == '0') {
 			/* Nothing to do */
 		} else {
+			fprintf(stderr, "Not a binary number\n");
 			return -1;
 		}
 		bitidx++;
@@ -112,7 +139,7 @@ static int readbin(char *s, size_t len, int *n)
 	return 0;
 }
 
-static void printb(int n)
+static void printb(long n)
 {
 	size_t i;
 	size_t intsize;
@@ -146,4 +173,24 @@ static void printb(int n)
 
 		m >>= 1;
 	}
+}
+
+static bool is_dec(const char *s)
+{
+	return is_number(s, isdigit);
+}
+
+static bool is_hex(const char *s)
+{
+	return is_number(s, isxdigit);
+}
+
+static bool is_number(const char *s, int (*is_digit)(int))
+{
+	for (; *s != '\0'; s++) {
+		if (!is_digit(*s)) {
+			return false;
+		}
+	}
+	return true;
 }
