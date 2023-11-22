@@ -26,7 +26,7 @@ install: $(EXE_NAME) $(MAN_GZ)
 	install -m 557 $(EXE_NAME) $(DESTDIR)
 	install -m 644 $(MAN_GZ) $(MAN_DESTDIR)
 
-test: $(EXE_NAME)
+check: $(EXE_NAME)
 	sh test.sh
 
 clean:
@@ -34,4 +34,4 @@ clean:
 	rm -f *.o
 	rm -f $(MAN_GZ)
 
-.PHONY: all test clean install
+.PHONY: all check clean install
