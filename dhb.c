@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <stdbool.h>
 
 #define DEC 1
 #define HEX 2
@@ -18,9 +17,9 @@ static int readhex(char *s, size_t len, unsigned long *n);
 static int readbin(char *s, size_t len, long *n);
 static void printb(long n);
 
-static bool is_number(const char *s, int (*is_digit)(int));
-static bool is_dec(const char *s);
-static bool is_hex(const char *s);
+static int is_number(const char *s, int (*is_digit)(int));
+static int is_dec(const char *s);
+static int is_hex(const char *s);
 
 int main(int argc, char *argv[])
 {
@@ -175,22 +174,22 @@ static void printb(long n)
 	}
 }
 
-static bool is_dec(const char *s)
+static int is_dec(const char *s)
 {
 	return is_number(s, isdigit);
 }
 
-static bool is_hex(const char *s)
+static int is_hex(const char *s)
 {
 	return is_number(s, isxdigit);
 }
 
-static bool is_number(const char *s, int (*is_digit)(int))
+static int is_number(const char *s, int (*is_digit)(int))
 {
 	for (; *s != '\0'; s++) {
 		if (!is_digit(*s)) {
-			return false;
+			return 0;
 		}
 	}
-	return true;
+	return 1;
 }
