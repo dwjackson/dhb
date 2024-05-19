@@ -4,7 +4,7 @@ OBJ_FILES = $(SRC_FILES:.c=.o)
 CC = cc
 CFLAGS = -ansi -Wall -Wextra -Wpedantic -O2
 
-PREFIX = ./usr
+PREFIX = /usr
 DESTDIR = $(PREFIX)/bin
 
 MAN_FILE = $(EXE_NAME).1
@@ -23,6 +23,8 @@ $(MAN_GZ): $(MAN_FILE)
 	gzip -k $(MAN_FILE)
 
 install: $(EXE_NAME) $(MAN_GZ)
+	mkdir -p $(DESTDIR)
+	mkdir -p $(MAN_DESTDIR)
 	install -m 557 $(EXE_NAME) $(DESTDIR)
 	install -m 644 $(MAN_GZ) $(MAN_DESTDIR)
 
