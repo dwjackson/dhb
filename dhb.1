@@ -9,8 +9,29 @@
 .Op Ar number
 .Sh DESCRIPTION
 Print a number in decimal, hexadecimal, and binary, and exit.
-.Sh EXAMPLE
+.Pp
+Different numerical bases are idenified via prefixes. These prefixes are:
+.Bl -tag -width Ds
+.It [none]
+decimal (base 10)
+.It 0x
+hexadecimal (base 16)
+.It 0b
+binary (base 2)
+.El
+.Sh EXAMPLES
+Convert from decimal:
 .Dl $ dhb 123
 .Bd -literal -offset indent -compact
 	123     0x7B    0b1111011
+.Ed
+Convert from hexadecimal:
+.Dl $ dhb 0x2F
+.Bd -literal -offset indent -compact
+        47      0x2F    0b101111
+.Ed
+Convert from binary:
+.Dl $ dhb 0b111
+.Bd -literal -offset indent -compact
+         7      0x7    0b111
 .Ed
